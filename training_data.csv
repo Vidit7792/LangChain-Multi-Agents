@@ -1,0 +1,155 @@
+import csv
+from random import choice, randint, shuffle
+
+# Category-specific terms and concepts
+terms = {
+    'Software Development & Engineering': {
+        'languages': ['Java', 'Python', 'C++', 'JavaScript', 'Ruby', 'Go', 'TypeScript', 'PHP', 'Swift'],
+        'frameworks': ['React', 'Angular', 'Vue.js', 'Django', 'Spring Boot', 'Flask', '.NET Core'],
+        'concepts': ['API development', 'microservices', 'containerization', 'version control', 'CI/CD'],
+        'tools': ['Git', 'Docker', 'Kubernetes', 'Jenkins', 'JIRA', 'Maven']
+    },
+    'Data Science & Analytics': {
+        'tools': ['Python', 'R', 'SQL', 'Tableau', 'Power BI', 'SAS', 'Excel'],
+        'concepts': ['statistical analysis', 'data visualization', 'predictive modeling', 'ETL processes'],
+        'techniques': ['regression analysis', 'clustering', 'time series analysis', 'A/B testing'],
+        'databases': ['PostgreSQL', 'MySQL', 'MongoDB', 'Snowflake', 'Amazon Redshift']
+    },
+    'Artificial Intelligence & Machine Learning': {
+        'frameworks': ['TensorFlow', 'PyTorch', 'Keras', 'Scikit-learn', 'XGBoost'],
+        'concepts': ['deep learning', 'neural networks', 'NLP', 'computer vision'],
+        'techniques': ['supervised learning', 'unsupervised learning', 'transfer learning'],
+        'models': ['CNN', 'RNN', 'LSTM', 'transformers', 'GANs']
+    },
+    'Cybersecurity': {
+        'concepts': ['network security', 'vulnerability assessment', 'threat detection', 'incident response'],
+        'tools': ['Wireshark', 'Nmap', 'Metasploit', 'Burp Suite', 'Splunk'],
+        'frameworks': ['NIST', 'ISO 27001', 'MITRE ATT&CK', 'OWASP']
+    },
+    'Cloud Computing': {
+        'platforms': ['AWS', 'Azure', 'Google Cloud', 'IBM Cloud', 'Oracle Cloud'],
+        'services': ['EC2', 'S3', 'Lambda', 'Azure Functions', 'Cloud Run'],
+        'tools': ['Terraform', 'CloudFormation', 'Ansible', 'Kubernetes']
+    },
+    'IT Project Management': {
+        'methodologies': ['Agile', 'Scrum', 'Waterfall', 'Kanban', 'Prince2'],
+        'tools': ['JIRA', 'Microsoft Project', 'Trello', 'Asana', 'Confluence'],
+        'skills': ['risk management', 'stakeholder management', 'resource planning', 'budgeting']
+    },
+    'Digital Technologies': {
+        'areas': ['digital transformation', 'emerging technologies', 'digital strategy'],
+        'technologies': ['blockchain', 'AR/VR', '5G', 'quantum computing'],
+        'concepts': ['digital innovation', 'technology adoption', 'digital solutions']
+    },
+    'Networking & Telecommunications': {
+        'protocols': ['TCP/IP', 'DNS', 'DHCP', 'VPN', 'BGP'],
+        'equipment': ['routers', 'switches', 'firewalls', 'load balancers'],
+        'concepts': ['network architecture', 'WAN', 'LAN', 'network security']
+    },
+    'Enterprise Architecture': {
+        'frameworks': ['TOGAF', 'Zachman', 'FEAF', 'DoDAF'],
+        'concepts': ['business architecture', 'solution architecture', 'technical architecture'],
+        'skills': ['enterprise modeling', 'architecture governance', 'strategic planning']
+    },
+    'IT Support and Operations': {
+        'tools': ['ServiceNow', 'BMC Remedy', 'Zendesk', 'Microsoft SCCM'],
+        'concepts': ['ITIL', 'service desk', 'incident management', 'problem management'],
+        'skills': ['troubleshooting', 'system administration', 'desktop support']
+    },
+    'Database Management': {
+        'databases': ['Oracle', 'SQL Server', 'PostgreSQL', 'MongoDB', 'Cassandra'],
+        'skills': ['database design', 'performance tuning', 'backup and recovery'],
+        'concepts': ['data modeling', 'normalization', 'indexing', 'replication']
+    },
+    'UX/UI Design': {
+        'tools': ['Figma', 'Sketch', 'Adobe XD', 'InVision', 'Zeplin'],
+        'concepts': ['user research', 'wireframing', 'prototyping', 'usability testing'],
+        'skills': ['interaction design', 'visual design', 'information architecture']
+    },
+    'IoT': {
+        'platforms': ['AWS IoT', 'Azure IoT', 'Google Cloud IoT'],
+        'protocols': ['MQTT', 'CoAP', 'LoRaWAN', 'Zigbee'],
+        'concepts': ['sensor networks', 'edge computing', 'embedded systems']
+    },
+    'Business Analysis': {
+        'skills': ['requirements gathering', 'process modeling', 'data analysis'],
+        'tools': ['JIRA', 'Confluence', 'Visio', 'UML tools'],
+        'methodologies': ['BABOK', 'Agile analysis', 'Six Sigma']
+    }
+}
+
+templates = [
+    "Experience with {} is required for this position",
+    "Strong knowledge of {} is essential",
+    "Must have hands-on experience in {}",
+    "Proficiency in {} is crucial",
+    "Looking for expertise in {}",
+    "Will be responsible for implementing {}",
+    "Should have practical experience with {}",
+    "Demonstrated ability to work with {}",
+    "Deep understanding of {} is required",
+    "Prior experience with {} is preferred",
+    "Seeking candidates with background in {}",
+    "Must demonstrate proficiency in {}",
+    "Knowledge of {} is highly desired",
+    "Will be involved in projects using {}",
+    "Should be familiar with {}",
+    "Experience implementing {} solutions",
+    "Track record of working with {}",
+    "Ability to leverage {} effectively",
+    "Proven experience with {}",
+    "Technical expertise in {}",
+    "Certification in {} is a plus",
+    "Will lead initiatives related to {}",
+    "Experience mentoring others in {}",
+    "Strong background in {} required",
+    "Responsible for maintaining {}",
+    "Will contribute to {} projects",
+    "Must understand principles of {}",
+    "Should have exposure to {}",
+    "Will drive innovation in {}",
+    "Expertise in {} methodologies"
+]
+
+def generate_sentence(category):
+    template = choice(templates)
+    category_terms = terms[category]
+    term_type = choice(list(category_terms.keys()))
+    term = choice(category_terms[term_type])
+    
+    # Sometimes combine two terms
+    if randint(0, 1):
+        second_term_type = choice(list(category_terms.keys()))
+        second_term = choice(category_terms[second_term_type])
+        term = f"{term} and {second_term}"
+    
+    return template.format(term)
+
+# Generate dataset
+dataset = []
+used_sentences = set()
+
+for category in terms.keys():
+    count = 0
+    while count < 500:
+        sentence = generate_sentence(category)
+        if sentence not in used_sentences:
+            dataset.append([sentence, category])
+            used_sentences.add(sentence)
+            count += 1
+
+# Shuffle dataset
+shuffle(dataset)
+
+# Write to CSV
+with open('expanded_job_descriptions_500_samples.csv', 'w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    writer.writerow(['sentence', 'category'])
+    writer.writerows(dataset)
+
+# Print sample
+print("Sample entries from the dataset:")
+for i in range(5):
+    print(f"Sentence: {dataset[i][0]}")
+    print(f"Category: {dataset[i][1]}")
+    print()
